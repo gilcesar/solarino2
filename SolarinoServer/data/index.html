@@ -1,0 +1,93 @@
+<html ng-app="app">
+
+<head>
+	<title>Solarino</title>
+	<meta charset="UTF-8">
+	<script src="/angular.min.js"></script>
+	<link rel="stylesheet" href="/bootstrap.min.css">
+	<link rel="stylesheet" href="/style.css">
+	<script>
+		angular.module("app", []);
+		angular.module("app").controller("appCtrl", function ($scope, $interval, $http) {
+			$scope.message = "Gerenciador solar Solarino.";
+			var auto = $interval(function () {
+				var ip = location.host;
+				$http.get(`http://${ip}/stats`).then(function (response) {
+					$scope.stats = response.data;
+				});
+			}, 5000);
+		});
+	</script>
+</head>
+
+<body>
+	<div ng-controller="appCtrl">
+		<div class="jumbotron">
+		  <h1>{{message}}</h1>
+		  <p>{{stats.time}}</p>
+		</div>
+		<div class="container-fluid">
+			<div class="table table-striped">
+				<div class="row">
+					<div class="col-sm">
+						Corrente do gatilho
+					</div>
+					<div class="col-sm">
+						{{stats.ampers | number: 2}} A
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-sm">
+						Geladeira ligada
+					</div>
+					<div class="col-sm">
+						{{stats.coolerOn? 'Sim': 'Não'}}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm">
+						Nobreak ligado
+					</div>
+					<div class="col-sm">
+						{{stats.sourceOn? 'Sim': 'Não'}}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm">
+						Carga de emergência
+					</div>
+					<div class="col-sm">
+						{{stats.emergency? 'Sim': 'Não'}}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm">
+						Carga Emerg. desativada
+					</div>
+					<div class="col-sm">
+						{{stats.emergencyDisabled? 'Sim': 'Não'}}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm">
+						Sistema
+					</div>
+					<div class="col-sm">
+						{{stats.systemOK? 'OK': 'Baixa tensão'}}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm">
+						Tensão do sistema
+					</div>
+					<div class="col-sm">
+						{{stats.systemVoltage | number: 2}} V
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
