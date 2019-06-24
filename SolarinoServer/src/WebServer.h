@@ -23,6 +23,7 @@ public:
         ssid = _ssid;
         password = _pwd;
         host = "esp8266fs";
+        initWebServer();
     }
 
     void initWebServer(void)
@@ -393,6 +394,6 @@ private:
     }
 
 
-};
+}webserver("GIGANETGIL", "34760864");
 
 #endif

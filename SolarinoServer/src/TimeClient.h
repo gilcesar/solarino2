@@ -4,35 +4,41 @@
 #include <WiFiUdp.h>
 #include <NTPClient.h>
 
-WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "time.nist.gov", -3 * 3600, 5 * 1000);
-
-void setupTime()
+class TimeClient
 {
-  timeClient.begin();
-}
+private:
+  WiFiUDP ntpUDP;
+  NTPClient *client;
+public:
+  TimeClient(const char* url, int timeOffset, int updateInterval){
+    client = new NTPClient(ntpUDP, url, timeOffset, updateInterval);
+    client->begin();
+  }
 
-bool isDateTimeUpdated(tm *tm)
-{
-  return tm->tm_year >= 2000;
-}
+  bool isDateTimeUpdated(tm *tm)
+  {
+    return tm->tm_year >= 2000;
+  }
 
-void updateTime(){
-    time_t tt = timeClient.getEpochTime();
+  void updateTime()
+  {
+    time_t tt = client->getEpochTime();
     tm *tm = localtime(&tt);
-    if (isDateTimeUpdated(tm))
+    if (!isDateTimeUpdated(tm))
     {
-      timeClient.setUpdateInterval(60 * 60 * 1000);//1h
+      client->forceUpdate();
+      //client->setUpdateInterval(60 * 60 * 1000); //1h
     }
-    timeClient.update();
+    client->update();
     printf("The local date and time is: %s", asctime(tm));
-}
+  }
 
-String ntpAsctime(){
-    time_t tt = timeClient.getEpochTime();
+  String formatedTime()
+  {
+    time_t tt = client->getEpochTime();
     tm *tm = localtime(&tt);
     return String(asctime(tm));
-}
-
+  }
+} timeClient("time.nist.gov", -3 * 3600, 60*60*1000);
 
 #endif

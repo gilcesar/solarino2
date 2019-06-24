@@ -89,7 +89,7 @@ public:
         s.sourceOn = _sourceOn;
         s.systemOK = _systemOK;
         s.systemVoltage = _systemVoltage;
-        s.time = ntpAsctime();
+        s.time = timeClient.formatedTime();
         return s;
     }
 
