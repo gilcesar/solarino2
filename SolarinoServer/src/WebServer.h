@@ -394,6 +394,6 @@ private:
     }
 
 
-}webserver("GIGANETGIL", "34760864");
+}webserver("xxx", "xxx");
 
 #endif
